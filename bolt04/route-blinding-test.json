@@ -1,0 +1,112 @@
+{
+    "comment": "A test case for creating a blinded route.",
+    "route": {
+        "comment": "This section contains the route before blinding, where each recipient_data is a plaintext tlv stream.",
+        "hops": [
+            {
+                "node_id": "02eec7245d6b7d2ccb30380bfbe2a3648cd7a942653f5aa340edcea1f283686619",
+                "recipient_data": "0a0208000000000000002a"
+            },
+            {
+                "node_id": "0324653eac434488002cc06bbfb7f10fe18991e35f9fe4302dbea6d2353dc0ab1c",
+                "recipient_data": "1002080000000000000231fdffff0206c1"
+            },
+            {
+                "node_id": "027f31ebc5462c1fdce1b737ecff52d37d75dea43ce11c74d25aa297165faa2007",
+                "recipient_data": "2d020800000000000004510421032c0b7cf95324a07d05398b240174dc0c2be444d96b159aa6c7f7b1e668680991"
+            },
+            {
+                "node_id": "032c0b7cf95324a07d05398b240174dc0c2be444d96b159aa6c7f7b1e668680991",
+                "recipient_data": "23042102edabbd16b41c8371b92ef2f04c1185b4f03b6dcd52ba9b78d9d7c89c8f221145"
+            },
+            {
+                "node_id": "02edabbd16b41c8371b92ef2f04c1185b4f03b6dcd52ba9b78d9d7c89c8f221145",
+                "recipient_data": "1102080000000000abcdef39031234563b00"
+            }    
+        ]
+    },
+    "blinding": {
+        "comment": "This section contains the internal values generated at each iteration of the blinding process applied to route provided above.",
+        "hops": [
+            {
+                "ephemeral_privkey": "0101010101010101010101010101010101010101010101010101010101010101",
+                "ephemeral_pubkey": "031b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
+                "shared_secret": "16a5d6594dbaa363305952ed9354fa9c38ddda718d218c5da6be19f0eaa11613",
+                "rho": "c02f21030b09f8a7c142574edd2ae1e65a20dfe884c9ecbbeb21632c382b1ba0",
+                "encrypted_recipient_data": "a745b767bd52520bdf8179c4bd40c3c0e3e987f28c47196f094023",
+                "blinded_node_id": "02ec68ed555f5d18b12fe0e2208563c3566032967cf11dc29b20c345449f9a50a2"
+            },
+            {
+                "ephemeral_privkey": "9071ba6ae014279f904f6fab35ef789cd119c72401253c2976fe8dd3b6a9ea57",
+                "ephemeral_pubkey": "035cb4c003d58e16cc9207270b3596c2be3309eca64c36b208c946bbb599bfcad0",
+                "shared_secret": "1b7dad017f86c26ca773cbae485b3e1ef6d16f1c73cce543ba79751597ff1976",
+                "rho": "68627a0ef8df98c90ffb1686b0fb91d011ced2824e66b3c3fa8e70bbf8903ec9",
+                "encrypted_recipient_data": "05779e94ead7de2a54fe7215446d79faf628d705f88be3dcbc93a2d206a98d6142",
+                "blinded_node_id": "022b09d77fb3374ee3ed9d2153e15e9962944ad1690327cbb0a9acb7d90f168763"
+            },
+            {
+                "ephemeral_privkey": "3a600484364161a544bb6c3a1636cc414f361d900b3a8101289dc11e749ca222",
+                "ephemeral_pubkey": "02e105bc01a7af07074a1b0b1d9a112a1d89c6cd87cc4e2b6ba3a824731d9508bd",
+                "shared_secret": "ee7b6f448e1bea37e0095f87577b8000ef97cb3d745d46c4d7df6112d6678901",
+                "rho": "bc7e8474460a372fc235730e2aa2f07caa0651c08afe5f64ca55cc7072c4103d",
+                "encrypted_recipient_data": "a5ddddd448f15208452f4d65da0d53679e9652c8f9c9882d795388a492b4060afb5f2f556e36aed51d089f60f7c994f866532ff579f5b976b0f300f4eff0",
+                "blinded_node_id": "03d9f889364dc5a173460a2a6cc565b4ca78931792115dd6ef82c0e18ced837372"
+            },
+            {
+                "ephemeral_privkey": "f4c7e4cdd219f961d885400b8a0aab832e947101513a3f450a9eeba6d58ea708",
+                "ephemeral_pubkey": "0349164db5398925ef234002e62d2834da115b8eafc73436fab98ed12266e797cc",
+                "shared_secret": "6398cbc203b00a1e1483db317e04c525362b8c0800724e549d47aa7260f54601",
+                "rho": "c78530c7b6033198d6ff3652eab573ae8be38c3c532aebfae58febbeeb3935fb",
+                "encrypted_recipient_data": "70a87b8aa8e96c9653736f1f7afd28ed45c040747e0beded3962eeb7fc97c448564c56762d8e53322b8f9ea054d81038804b95f8",
+                "blinded_node_id": "03bfddd2253b42fe12edd37f9071a3883830ed61a4bc347eeac63421629cf032b5"
+            },
+            {
+                "ephemeral_privkey": "8aab5a9c0e4176aeebfb56400e8ade9954c49f6a8c49f14ff45ca6fe70d1f798",
+                "ephemeral_pubkey": "020a6d1951916adcac22125063f62c35b3686f36e5db2f77073f3d35b19c7a118a",
+                "shared_secret": "63bdf85c34d9ea2516109ad2ee8966bae85208f630546d26adc7197e24324c5a",
+                "rho": "647194ec16934e6ad7254cb93841e7aa942fc8b873cd77278b2c24b79d0f236b",
+                "encrypted_recipient_data": "7a41cf64cbf146ff7cff76691857b3742bed6f8b2f4387f9ac2ae6f0ed945ada4f8b",
+                "blinded_node_id": "03a8588bc4a0a2f0d2fb8d5c0f8d062fb4d78bfba24a85d0ddeb4fd35dd3b34110"
+            }
+        ]
+    },
+    "unblinding": {
+        "comment": "This section contains the internal values generated by intermediate nodes when unblinding their payload. Each intermediate node receives an ephemeral_pubkey which lets it decrypt the encrypted_recipient_data.",
+        "hops": [
+            {
+                "node_privkey": "4141414141414141414141414141414141414141414141414141414141414141",
+                "ephemeral_pubkey": "031b84c5567b126440995d3ed5aaba0565d71e1834604819ff9c17f5e9d5dd078f",
+                "blinded_privkey": "7e959bf6bdd3a98caf26cbbee7b69678381d5fa2882c6c12eb2042c2367264b0",
+                "decrypted_recipient_data": "0a0208000000000000002a",
+                "next_ephemeral_pubkey": "035cb4c003d58e16cc9207270b3596c2be3309eca64c36b208c946bbb599bfcad0"
+            },
+            {
+                "node_privkey": "4242424242424242424242424242424242424242424242424242424242424242",
+                "ephemeral_pubkey": "035cb4c003d58e16cc9207270b3596c2be3309eca64c36b208c946bbb599bfcad0",
+                "blinded_privkey": "edf24fd69d524687742b56aa2fbbe472dc2e589671938ef3814c14a0b230b03f",
+                "decrypted_recipient_data": "1002080000000000000231fdffff0206c1",
+                "next_ephemeral_pubkey": "02e105bc01a7af07074a1b0b1d9a112a1d89c6cd87cc4e2b6ba3a824731d9508bd"
+            },
+            {
+                "node_privkey": "4343434343434343434343434343434343434343434343434343434343434343",
+                "ephemeral_pubkey": "02e105bc01a7af07074a1b0b1d9a112a1d89c6cd87cc4e2b6ba3a824731d9508bd",
+                "blinded_privkey": "2daf3897f24f63d79f94af1dab0149c3eeb4ab2a1819ce25e85f5f2d61994f09",
+                "decrypted_recipient_data": "2d020800000000000004510421032c0b7cf95324a07d05398b240174dc0c2be444d96b159aa6c7f7b1e668680991",
+                "next_ephemeral_pubkey": "0349164db5398925ef234002e62d2834da115b8eafc73436fab98ed12266e797cc"
+            },
+            {
+                "node_privkey": "4444444444444444444444444444444444444444444444444444444444444444",
+                "ephemeral_pubkey": "0349164db5398925ef234002e62d2834da115b8eafc73436fab98ed12266e797cc",
+                "blinded_privkey": "2c769af7b2c000729147689e1182be4d6517448898d6d58cdb1f5b1bf4fe368b",
+                "decrypted_recipient_data": "23042102edabbd16b41c8371b92ef2f04c1185b4f03b6dcd52ba9b78d9d7c89c8f221145",
+                "next_ephemeral_pubkey": "020a6d1951916adcac22125063f62c35b3686f36e5db2f77073f3d35b19c7a118a"
+            },
+            {
+                "node_privkey": "4545454545454545454545454545454545454545454545454545454545454545",
+                "ephemeral_pubkey": "020a6d1951916adcac22125063f62c35b3686f36e5db2f77073f3d35b19c7a118a",
+                "blinded_privkey": "9d156092c3cf605ff32554c29d066bfeb2da6ee374abe42b8efa3eeaa1468936",
+                "decrypted_recipient_data": "1102080000000000abcdef39031234563b00"
+            }
+        ]
+    }
+}
