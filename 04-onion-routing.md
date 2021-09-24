@@ -400,12 +400,18 @@ node, that may contain the following TLV fields:
 
 1. `tlv_stream`: `encrypted_recipient_data_tlv`
 2. types:
+    1. type: 1 (`padding`)
+    2. data:
+        * [`...*byte`:`padding`]
     1. type: 2 (`short_channel_id`)
     2. data:
         * [`short_channel_id`:`short_channel_id`]
     1. type: 4 (`next_node_id`)
     2. data:
         * [`point`:`node_id`]
+    1. type: 6 (`recipient_secret`)
+    2. data:
+        * [`...*byte`:`data`]
 
 #### Requirements
 
@@ -416,15 +422,17 @@ A recipient N(r) creating a blinded route `N(0) -> N(1) -> ... -> N(r)` to itsel
   - `E(0) = e(0) * G`
   - For every node `N(i)` in the route:
     - let `P(i) = k(i) * G` be `N(i)`'s `node_id` (`k(i)` is `N(i)`'s private key)
-    - `ss(i) = H(e(i) * P(i)) = H(k(i) * E(i))` (shared secret known only by `N(r)` and `N(i)`)
+    - `ss(i) = SHA256(e(i) * P(i)) = SHA256(k(i) * E(i))` (ECDH shared secret known only by `N(r)` and `N(i)`)
     - `B(i) = HMAC256("blinded_node_id", ss(i)) * P(i)` (blinded `node_id` for `N(i)`, private key known only by `N(i)`)
     - `rho(i) = HMAC256("rho", ss(i))`
-    - `e(i+1) = H(E(i) || ss(i)) * e(i)` (ephemeral private key, only known by `N(r)`)
-    - `E(i+1) = H(E(i) || ss(i)) * E(i)` (NB: `N(i)` MUST NOT learn `e(i)`)
-- MAY create an `encrypted_recipient_data` for each blinded node `B(i)`
+    - `e(i+1) = SHA256(E(i) || ss(i)) * e(i)` (ephemeral private key, only known by `N(r)`)
+    - `E(i+1) = SHA256(E(i) || ss(i)) * E(i)` (NB: `N(i)` MUST NOT learn `e(i)`)
+- SHOULD create an `encrypted_recipient_data` for each blinded node `B(i)`
 - If it creates `encrypted_recipient_data`:
   - MUST encrypt it with ChaCha20-Poly1305 using the `rho(i)` key and an all-zero nonce
-  - MUST use `E(i)` in ChaCha20-Poly1305's associated authenticated data
+  - MAY store data in the `recipient_secret` of the payload to itself to verify
+    that the route is used in the right context
+  - MAY add padding data to ensure all `encrypted_recipient_data` have the same length
 - MUST communicate the blinded node IDs `B(i)` and `encrypted_recipient_data(i)` to the sender
 - MUST communicate the real node ID of the introduction point `N(0)` to the sender
 - MUST communicate the first ephemeral key `E(0)` to the sender
@@ -438,38 +446,39 @@ The sender:
 The introduction point:
 
 - MUST compute:
-  - `ss(0) = H(k(0) * E(0))`
+  - `ss(0) = SHA256(k(0) * E(0))` (standard ECDH)
   - `rho(0) = HMAC256("rho", ss(0))`
-  - `E(1) = H(E(0) || ss(0)) * E(0)`
+  - `E(1) = SHA256(E(0) || ss(0)) * E(0)`
 - If an `encrypted_recipient_data` field is provided:
   - MUST decrypt it using `rho(0)` and `E(0)`
-  - SHOULD use the decrypted fields to locate the next node
+  - MUST use the decrypted fields to locate the next node
 - MUST forward the onion and communicate `E(1)` to the next node
 
 An intermediate node in the blinded route:
 
-- MUST receive `E(i)` from the previous node
 - MUST compute:
-  - `ss(i) = H(k(i) * E(i))`
+  - `ss(i) = SHA256(k(i) * E(i))` (standard ECDH)
   - `b(i) = HMAC256("blinded_node_id", ss(i)) * k(i)`
   - `rho(i) = HMAC256("rho", ss(i))`
-  - `E(i+1) = H(E(i) || ss(i)) * E(i)`
-- MUST use `b(i)` instead of its private key `k(i)` to decrypt the onion
+  - `E(i+1) = SHA256(E(i) || ss(i)) * E(i)`
+- MUST use `b(i)` instead of its private key `k(i)` to decrypt the onion. Note
+  that the node may instead tweak the onion ephemeral key with
+  `HMAC256("blinded_node_id", ss(i))` which achieves the same result.
 - If an `encrypted_recipient_data` field is provided:
   - MUST decrypt it using `rho(i)` and `E(i)`
-  - SHOULD use the decrypted fields to locate the next node
+  - MUST use the decrypted fields to locate the next node
 - MUST forward the onion and communicate `E(i+1)` to the next node
 
-The recipient:
+The final recipient:
 
-- MUST receive `E(r)` from the previous node
-- MUST verify that `E(r)` matches a blinded route it created
 - MUST compute:
-  - `ss(r) = H(k(r) * E(r))`
+  - `ss(r) = SHA256(k(r) * E(r))` (standard ECDH)
   - `b(r) = HMAC256("blinded_node_id", ss(r)) * k(r)`
   - `rho(r) = HMAC256("rho", ss(r))`
 - If an `encrypted_recipient_data` field is provided:
   - MUST decrypt it using `rho(r)` and `E(r)`
+- MUST ignore the message if `E(r)` or `recipient_secret` does not match the
+  blinded route it created
 
 #### Rationale
 
@@ -484,6 +493,22 @@ Use-cases where route blinding is useful include:
 - Using unannounced channels in invoices without revealing them
 - Forcing a message to go through a specific set of intermediaries that can witness it
 - Providing anonymous reply paths for onion messages (offers, stuckless payments, etc)
+
+Each node in the blinded route needs to receive `E(i)` to be able to decrypt
+the onion and the `encrypted_recipient_data`. Protocols that use route blinding
+must specify how this value is propagated between nodes.
+
+The final recipient must verify that the blinded route is used in the right
+context (e.g. for a specific payment). It can do so by storing `E(r)` and the
+context (e.g. a `payment_hash`), and verifying that they match when receiving
+the onion. Otherwise, to avoid additional storage cost, it can put some context
+information in the `recipient_secret` field (e.g. a `payment_hash`) and verify
+that when receiving the onion.
+
+The `padding` field can be used to ensure that all `encrypted_recipient_data`
+have the same length. It's particularly useful when adding dummy hops at the
+end of a blinded route, to prevent the sender from figuring out which node is
+the final recipient.
 
 # Accepting and Forwarding a Payment
 
